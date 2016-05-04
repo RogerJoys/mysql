@@ -353,8 +353,10 @@ EOSQL
         @pkginfo.set['rhel']['6']['5.7']['server_package'] = 'mysql-community-server'
         @pkginfo.set['rhel']['7']['5.5']['client_package'] = %w(mysql-community-client mysql-community-devel)
         @pkginfo.set['rhel']['7']['5.5']['server_package'] = 'mysql-community-server'
-        @pkginfo.set['rhel']['7']['5.6']['client_package'] = %w(mysql-community-client mysql-community-devel)
-        @pkginfo.set['rhel']['7']['5.6']['server_package'] = 'mysql-community-server'
+        @pkginfo.set['rhel']['7']['5.6']['client_package'] = 'MySQL-client-advanced'
+        @pkginfo.set['rhel']['7']['5.6']['server_package'] = 'MySQL-server-advanced'
+        # @pkginfo.set['rhel']['7']['5.6']['client_package'] = %w(mysql-community-client mysql-community-devel)
+        # @pkginfo.set['rhel']['7']['5.6']['server_package'] = 'mysql-community-server'
         @pkginfo.set['rhel']['7']['5.7']['client_package'] = %w(mysql-community-client mysql-community-devel)
         @pkginfo.set['rhel']['7']['5.7']['server_package'] = 'mysql-community-server'
         @pkginfo.set['smartos']['5.11']['5.5']['client_package'] = %w(mysql-client)

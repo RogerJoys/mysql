@@ -35,6 +35,16 @@ class Chef
           action new_resource.package_action
           notifies :install, 'package[perl-Sys-Hostname-Long]', :immediately if platform_family?('suse')
           notifies :run, 'execute[Initial DB setup script]', :immediately if platform_family?('suse')
+          notifies :install, 'package[perl-Data-Dumper]', :immediately if platform_family?('rhel') || platform_family?('redhat')
+          notifies :run, 'execute[Initial DB setup script]', :immediately if platform_family?('rhel') || platform_family?('redhat')
+        end
+
+        # In enterprise, the client libs must be installed for service checker to run
+        package "#{new_resource.name} :create #{client_package_name}" do
+          package_name client_package_name
+          version parsed_version if node['platform'] == 'smartos'
+          version new_resource.package_version
+          action new_resource.package_action
         end
 
         # hostname perl module needed by suse
@@ -47,6 +57,17 @@ class Chef
           command '/usr/lib/mysql/mysql-systemd-helper install '
           action :nothing
         end
+
+        package 'perl-Data-Dumper' do
+          action :nothing
+        end
+
+        execute 'Initial DB setup script' do
+          environment 'INSTANCE' => new_resource.name
+          command '/usr/bin/mysql_install_db'
+          action :nothing
+        end
+
 
         create_stop_system_service
 
@@ -137,7 +158,7 @@ class Chef
         template "#{new_resource.name} :create #{etc_dir}/my.cnf" do
           path "#{etc_dir}/my.cnf"
           source 'my.cnf.erb'
-          cookbook 'mysql'
+          cookbook 'gci-mysql'
           owner new_resource.run_user
           group new_resource.run_group
           mode '0600'
@@ -213,7 +234,7 @@ class Chef
 
             template "#{new_resource.name} :create /etc/apparmor.d/local/usr.sbin.mysqld" do
               path '/etc/apparmor.d/local/usr.sbin.mysqld'
-              cookbook 'mysql'
+              cookbook 'gci-mysql'
               source 'apparmor/usr.sbin.mysqld-local.erb'
               owner 'root'
               group 'root'
@@ -224,7 +245,7 @@ class Chef
 
             template "#{new_resource.name} :create /etc/apparmor.d/usr.sbin.mysqld" do
               path '/etc/apparmor.d/usr.sbin.mysqld'
-              cookbook 'mysql'
+              cookbook 'gci-mysql'
               source 'apparmor/usr.sbin.mysqld.erb'
               owner 'root'
               group 'root'
@@ -235,7 +256,7 @@ class Chef
 
             template "#{new_resource.name} :create /etc/apparmor.d/local/mysql/#{new_resource.instance}" do
               path "/etc/apparmor.d/local/mysql/#{new_resource.instance}"
-              cookbook 'mysql'
+              cookbook 'gci-mysql'
               source 'apparmor/usr.sbin.mysqld-instance.erb'
               owner 'root'
               group 'root'

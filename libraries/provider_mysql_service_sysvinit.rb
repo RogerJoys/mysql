@@ -22,7 +22,7 @@ class Chef
             pid_file: pid_file,
             scl_name: scl_name
           )
-          cookbook 'mysql'
+          cookbook 'gci-mysql'
           action :create
         end
 
