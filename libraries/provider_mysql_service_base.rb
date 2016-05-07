@@ -36,7 +36,7 @@ class Chef
           notifies :install, 'package[perl-Sys-Hostname-Long]', :immediately if platform_family?('suse')
           notifies :run, 'execute[Initial DB setup script]', :immediately if platform_family?('suse')
           notifies :install, 'package[perl-Data-Dumper]', :immediately if platform_family?('rhel') || platform_family?('redhat')
-          notifies :run, 'execute[Initial DB setup script]', :immediately if platform_family?('rhel') || platform_family?('redhat')
+          notifies :run, 'execute[Initial mysql_install_db script]', :immediately if platform_family?('rhel') || platform_family?('redhat')
         end
 
         # In enterprise, the client libs must be installed for service checker to run
@@ -62,7 +62,7 @@ class Chef
           action :nothing
         end
 
-        execute 'Initial DB setup script' do
+        execute 'Initial mysql_install_db script' do
           environment 'INSTANCE' => new_resource.name
           command '/usr/bin/mysql_install_db'
           action :nothing
